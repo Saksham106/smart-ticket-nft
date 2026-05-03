@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "./contract.js";
+import { formatRevertError } from "./revertError.js";
 
 export default function App() {
   const [account, setAccount] = useState(null);
@@ -55,7 +56,7 @@ export default function App() {
       setMaxSupply(max);
       setTotalMinted(minted);
     } catch (error) {
-      setStatus(error.message || "Failed to load contract data.");
+      setStatus(formatRevertError(error) || "Failed to load contract data.");
     }
   }
 
@@ -66,7 +67,7 @@ export default function App() {
       setStatus("Ticket purchased.");
       await loadContractData();
     } catch (error) {
-      setStatus(error.shortMessage || error.message);
+      setStatus(formatRevertError(error));
     }
   }
 
@@ -76,7 +77,7 @@ export default function App() {
       const redeemed = await contract.isRedeemed(statusTokenId);
       setStatusResult(`Owner: ${owner}\nRedeemed: ${redeemed}`);
     } catch (error) {
-      setStatusResult(error.shortMessage || error.message);
+      setStatusResult(formatRevertError(error));
     }
   }
 
@@ -87,7 +88,7 @@ export default function App() {
       await tx.wait();
       setStatus("Ticket listed for resale.");
     } catch (error) {
-      setStatus(error.shortMessage || error.message);
+      setStatus(formatRevertError(error));
     }
   }
 
@@ -98,17 +99,30 @@ export default function App() {
       await tx.wait();
       setStatus("Resale ticket purchased.");
     } catch (error) {
-      setStatus(error.shortMessage || error.message);
+      setStatus(formatRevertError(error));
     }
   }
 
   async function redeemTicket() {
     try {
-      const tx = await contract.redeem(redeemTokenId);
+      const raw = String(redeemTokenId).trim();
+      if (!raw || !/^\d+$/.test(raw)) {
+        setStatus("Enter a numeric Token ID (e.g. 1).");
+        return;
+      }
+      const tokenId = BigInt(raw);
+
+      /** Rejects phantom IDs early: ERC-721 requires a minted token to have an owner. */
+      await contract.ownerOf(tokenId);
+      /** Same checks as send (organizer, already redeemed, on-chain guards) — no wallet popup; fails fast */
+      await contract.redeem.staticCall(tokenId);
+
+      const tx = await contract.redeem(tokenId);
       await tx.wait();
       setStatus("Ticket redeemed.");
+      await loadContractData();
     } catch (error) {
-      setStatus(error.shortMessage || error.message);
+      setStatus(formatRevertError(error));
     }
   }
 
@@ -124,14 +138,20 @@ export default function App() {
 
       <section>
         <h2>Contract Info</h2>
-        <div>Primary Price: {primaryPrice ? ethers.formatEther(primaryPrice) : "-"} ETH</div>
-        <div>Resale Cap: {resaleCap ? ethers.formatEther(resaleCap) : "-"} ETH</div>
-        <div>Supply: {totalMinted ?? "-"} / {maxSupply ?? "-"}</div>
+        <div>
+          Primary Price: {primaryPrice != null ? ethers.formatEther(primaryPrice) : "-"} ETH
+        </div>
+        <div>Resale Cap: {resaleCap != null ? ethers.formatEther(resaleCap) : "-"} ETH</div>
+        <div>
+          Supply:{" "}
+          {totalMinted != null ? String(totalMinted) : "-"} /{" "}
+          {maxSupply != null ? String(maxSupply) : "-"}
+        </div>
       </section>
 
       <section>
         <h2>Buy Ticket</h2>
-        <button onClick={buyTicket} disabled={!contract || !primaryPrice}>Buy Ticket</button>
+        <button onClick={buyTicket} disabled={!contract || primaryPrice == null}>Buy Ticket</button>
       </section>
 
       <section>

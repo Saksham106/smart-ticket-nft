@@ -1,4 +1,4 @@
-export const CONTRACT_ADDRESS = "REPLACE_WITH_DEPLOYED_ADDRESS";
+export const CONTRACT_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
 export const CONTRACT_ABI = [
   "function buyTicket() payable",
@@ -13,5 +13,16 @@ export const CONTRACT_ABI = [
   "function resalePriceCap() view returns (uint256)",
   "function maxSupply() view returns (uint256)",
   "function totalMinted() view returns (uint256)",
-  "function owner() view returns (address)"
+  "function owner() view returns (address)",
+  "error NotOrganizer()",
+  "error SoldOut()",
+  "error IncorrectPayment(uint256 required, uint256 provided)",
+  "error ResaleCapTooLow(uint256 cap, uint256 primaryPrice)",
+  "error ResalePriceTooHigh(uint256 maxPrice, uint256 provided)",
+  "error NotTokenOwner()",
+  "error NotListed()",
+  "error AlreadyRedeemed()",
+  "error TransferNotAllowed()",
+  "error EthTransferFailed()",
+  "error InvalidTicket()"
 ];

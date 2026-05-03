@@ -16,6 +16,7 @@ contract EventTicketNFT is ERC721, Ownable2Step, ReentrancyGuard {
     error AlreadyRedeemed();
     error TransferNotAllowed();
     error EthTransferFailed();
+    error InvalidTicket();
 
     struct Listing {
         address seller;
@@ -138,6 +139,9 @@ contract EventTicketNFT is ERC721, Ownable2Step, ReentrancyGuard {
     /// @notice Organizer-only ticket redemption.
     /// @param tokenId The ticket to redeem.
     function redeem(uint256 tokenId) external onlyOrganizer {
+        if (!_exists(tokenId)) {
+            revert InvalidTicket();
+        }
         if (_redeemed[tokenId]) {
             revert AlreadyRedeemed();
         }

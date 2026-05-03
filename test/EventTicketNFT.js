@@ -93,4 +93,14 @@ describe("EventTicketNFT", function () {
     await contract.redeem(1);
     await expect(contract.redeem(1)).to.be.revertedWithCustomError(contract, "AlreadyRedeemed");
   });
+
+  it("redeem unminted token id reverts", async function () {
+    await contract.connect(alice).buyTicket({ value: PRIMARY_PRICE });
+
+    await expect(contract.redeem(2)).to.be.revertedWithCustomError(contract, "InvalidTicket");
+  });
+
+  it("redeem token id zero reverts", async function () {
+    await expect(contract.redeem(0)).to.be.revertedWithCustomError(contract, "InvalidTicket");
+  });
 });
