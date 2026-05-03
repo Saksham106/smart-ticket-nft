@@ -49,7 +49,52 @@ cd frontend
 npm run dev
 ```
 
-Open the Vite URL in your browser and connect MetaMask to the local Hardhat network.
+Open the Vite URL printed by Vite (usually `http://localhost:5173`) in **the same desktop browser** where MetaMask runs.
+
+## MetaMask setup (Hardhat localhost)
+
+Hardhat listens on **`http://127.0.0.1:8545`** with chain ID **`31337`**. MetaMask must use that RPC—not Ethereum mainnet or a testnet—or the frontend cannot read `CONTRACT_ADDRESS` or submit transactions.
+
+### 1. Add a custom network
+
+In MetaMask: **Networks** → **Add network** → **Add a network manually** (wording varies by extension version):
+
+| Field | Value |
+|--------|--------|
+| Network name | e.g. `Hardhat Local` |
+| RPC URL | `127.0.0.1:8545` or `http://127.0.0.1:8545` (MetaMask often stores it without `http://`) |
+| Chain ID | `31337` |
+| Currency symbol | `ETH` |
+
+Leave the block explorer URL empty for local demos.
+
+MetaMask may warn that **`31337` matches “GoChain Testnet”** or suggests “GO”—you can **ignore that** on a local Hardhat node.
+
+### 2. Import an account that has ETH on this chain
+
+Hardhat prefunds deterministic dev accounts **only on the node started by `npm run node`**.
+
+When **`npm run node`** starts, its terminal prints **Account #0, Account #1, …** and each **Private key**.
+
+1. Stay on networks: select **Hardhat Local** (`31337`).
+2. In MetaMask choose **Import account** and paste **one of those printed private keys** (e.g. Account #0).  
+   You should see a large **ETH** balance—that is normal test ether, not real money.
+
+Do **not** import a random personal wallet and expect localhost funds unless you’ve sent test ETH there from one of the prefunded Hardhat accounts first.
+
+### 3. Turn on the UI and connect
+
+1. **`npm run node`** (running)  
+2. **`npm run deploy`** → set `CONTRACT_ADDRESS` in `frontend/src/contract.js`  
+3. **`cd frontend && npm run dev`** → open the app URL  
+
+Click **Connect** in the app and approve MetaMask if prompted; keep the extension on **Hardhat Local**.
+
+### Notes
+
+- **Same machine:** Browser + MetaMask + Hardhat must all see **`127.0.0.1:8545`**. Easiest workflow: **desktop Chrome/Firefox/Edge with MetaMask on the PC that runs Hardhat.** On **MetaMask mobile**, `127.0.0.1` is the phone—not your laptop—unless you deliberately tunnel or host on a LAN IP.
+- Restarting **`npm run node`** wipes chain state → run **`npm run deploy`** again and update **`CONTRACT_ADDRESS`**.
+- Visiting `http://127.0.0.1:8545` in a normal browser tab shows a JSON-RPC parse error—that is expected; RPC is meant for wallets and apps, not as a webpage.
 
 ## Demo Steps
 
