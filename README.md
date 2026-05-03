@@ -24,6 +24,17 @@ npm run gas
 
 Gas report output includes minting, resale purchase, and redemption calls.
 
+## Baseline vs. Capped Comparison
+
+The baseline contract (`contracts/BaselineTicketNFT.sol`) and parallel tests (`test/BaselineTicketNFT.js`) are committed alongside `EventTicketNFT`, plus four reproducible scenarios in `scripts/scenarios/` and an gas benchmark in `scripts/bench.js`.
+
+```bash
+npm run bench       
+npm run scenarios   
+```
+
+The full write-up is in [`docs/comparison.md`](docs/comparison.md).
+
 ## Local Demo Flow
 
 ### 1) Start local chain
