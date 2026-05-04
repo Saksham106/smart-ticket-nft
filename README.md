@@ -1,6 +1,6 @@
 # NFT Ticketing dApp (Simple Prototype)
 
-A minimal, student-level NFT ticketing demo for a single event. Each ticket is an ERC-721 NFT with organizer-only minting, capped resale, blocked direct transfers, and one-time redemption.
+A minimal, student-level NFT ticketing demo for a single event. Each ticket is an ERC-721 NFT with organizer-only minting, capped resale, blocked direct transfers, and one-time **holder-initiated** redemption at check-in.
 
 ## Requirements
 
@@ -115,8 +115,8 @@ Click **Connect** in the app and approve MetaMask if prompted; keep the extensio
 4. Another buyer purchases the resale ticket.
 5. Attempted resale above the cap fails.
 6. Attempted direct transfer fails.
-7. Organizer checks in the ticket.
-8. A second check-in attempt fails.
+7. **Check-in:** organizer confirms `ownerOf` / `!isRedeemed` (e.g. “View My Ticket Status”), then the **ticket holder** submits **Redeem at gate**; organizer confirms `isRedeemed`.
+8. A second redeem (or redeem by someone who does not own the ticket) fails.
 
 ## Notes
 

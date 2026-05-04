@@ -80,27 +80,33 @@ describe("EventTicketNFT", function () {
     ).to.be.revertedWithCustomError(contract, "TransferNotAllowed");
   });
 
-  it("organizer can redeem a ticket", async function () {
+  it("ticket holder can redeem a ticket", async function () {
     await contract.connect(alice).buyTicket({ value: PRIMARY_PRICE });
 
-    await contract.redeem(1);
+    await contract.connect(alice).redeem(1);
     expect(await contract.isRedeemed(1)).to.equal(true);
+  });
+
+  it("non-holder cannot redeem", async function () {
+    await contract.connect(alice).buyTicket({ value: PRIMARY_PRICE });
+
+    await expect(contract.connect(bob).redeem(1)).to.be.revertedWithCustomError(contract, "NotTokenOwner");
   });
 
   it("redeeming the same ticket twice reverts", async function () {
     await contract.connect(alice).buyTicket({ value: PRIMARY_PRICE });
 
-    await contract.redeem(1);
-    await expect(contract.redeem(1)).to.be.revertedWithCustomError(contract, "AlreadyRedeemed");
+    await contract.connect(alice).redeem(1);
+    await expect(contract.connect(alice).redeem(1)).to.be.revertedWithCustomError(contract, "AlreadyRedeemed");
   });
 
   it("redeem unminted token id reverts", async function () {
     await contract.connect(alice).buyTicket({ value: PRIMARY_PRICE });
 
-    await expect(contract.redeem(2)).to.be.revertedWithCustomError(contract, "InvalidTicket");
+    await expect(contract.connect(alice).redeem(2)).to.be.revertedWithCustomError(contract, "InvalidTicket");
   });
 
   it("redeem token id zero reverts", async function () {
-    await expect(contract.redeem(0)).to.be.revertedWithCustomError(contract, "InvalidTicket");
+    await expect(contract.connect(alice).redeem(0)).to.be.revertedWithCustomError(contract, "InvalidTicket");
   });
 });

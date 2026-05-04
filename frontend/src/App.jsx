@@ -114,7 +114,7 @@ export default function App() {
 
       /** Rejects phantom IDs early: ERC-721 requires a minted token to have an owner. */
       await contract.ownerOf(tokenId);
-      /** Same checks as send (organizer, already redeemed, on-chain guards) — no wallet popup; fails fast */
+      /** Dry-run: holder-only, not already redeemed, etc. — no wallet popup; fails fast */
       await contract.redeem.staticCall(tokenId);
 
       const tx = await contract.redeem(tokenId);
@@ -191,13 +191,13 @@ export default function App() {
       </section>
 
       <section>
-        <h2>Organizer Check-In</h2>
+        <h2>Check-in (ticket holder)</h2>
         <input
           placeholder="Token ID"
           value={redeemTokenId}
           onChange={(event) => setRedeemTokenId(event.target.value)}
         />
-        <button onClick={redeemTicket} disabled={!contract || !redeemTokenId}>Redeem</button>
+        <button onClick={redeemTicket} disabled={!contract || !redeemTokenId}>Redeem at gate</button>
       </section>
 
       <section>

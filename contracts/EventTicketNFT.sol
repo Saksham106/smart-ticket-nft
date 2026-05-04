@@ -37,7 +37,7 @@ contract EventTicketNFT is ERC721, Ownable2Step, ReentrancyGuard {
     event TicketPurchased(address indexed buyer, uint256 indexed tokenId, uint256 price, bool isPrimary);
     event TicketListed(address indexed seller, uint256 indexed tokenId, uint256 price);
     event TicketResalePurchased(address indexed buyer, uint256 indexed tokenId, uint256 price);
-    event TicketRedeemed(address indexed organizer, uint256 indexed tokenId);
+    event TicketRedeemed(address indexed holder, uint256 indexed tokenId);
 
     constructor(
         string memory name_,
@@ -136,11 +136,14 @@ contract EventTicketNFT is ERC721, Ownable2Step, ReentrancyGuard {
         emit TicketResalePurchased(msg.sender, tokenId, msg.value);
     }
 
-    /// @notice Organizer-only ticket redemption.
+    /// @notice Ticket holder marks the ticket used (check-in). Only the current owner may call.
     /// @param tokenId The ticket to redeem.
-    function redeem(uint256 tokenId) external onlyOrganizer {
+    function redeem(uint256 tokenId) external {
         if (!_exists(tokenId)) {
             revert InvalidTicket();
+        }
+        if (ownerOf(tokenId) != msg.sender) {
+            revert NotTokenOwner();
         }
         if (_redeemed[tokenId]) {
             revert AlreadyRedeemed();

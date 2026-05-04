@@ -41,3 +41,14 @@ input {
   color: #4b4b4b;
   white-space: pre-wrap;
 }
+
+.hint {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  color: #3d3d3d;
+  line-height: 1.45;
+}
+
+.hint code {
+  font-size: 0.9em;
+}
