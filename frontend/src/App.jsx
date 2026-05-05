@@ -26,7 +26,6 @@ export default function App() {
     }
   }, [contract]);
 
-  /** Scan 1…totalMinted from chain — no Enumerable; OK for modest maxSupply (this demo ≤100). */
   useEffect(() => {
     if (!contract || account == null) {
       setMyTickets([]);
