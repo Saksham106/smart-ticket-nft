@@ -52,3 +52,54 @@ input {
 .hint code {
   font-size: 0.9em;
 }
+
+.ticket-catalog {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ticket-catalog li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid #d9d4c8;
+  background: #fff;
+  border-radius: 6px;
+}
+
+.ticket-catalog__meta {
+  flex: 1 1 220px;
+  font-size: 0.98rem;
+  line-height: 1.4;
+}
+
+.ticket-catalog__meta strong {
+  font-size: 1.05rem;
+}
+
+.ticket-catalog__actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.ticket-catalog__actions input {
+  margin-top: 0;
+  min-width: 8rem;
+}
+
+.ticket-catalog__actions span {
+  font-weight: 600;
+}
+
+.ticket-catalog--wide .ticket-catalog__meta {
+  flex-basis: 280px;
+}
