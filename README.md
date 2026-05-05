@@ -29,8 +29,8 @@ Gas report output includes minting, resale purchase, and redemption calls.
 The baseline contract (`contracts/BaselineTicketNFT.sol`) and parallel tests (`test/BaselineTicketNFT.js`) are committed alongside `EventTicketNFT`, plus four reproducible scenarios in `scripts/scenarios/` and an gas benchmark in `scripts/bench.js`.
 
 ```bash
-npm run bench       
-npm run scenarios   
+npm run bench
+npm run scenarios
 ```
 
 The full write-up is in [`docs/comparison.md`](docs/comparison.md).
@@ -70,12 +70,12 @@ Hardhat listens on **`http://127.0.0.1:8545`** with chain ID **`31337`**. MetaMa
 
 In MetaMask: **Networks** → **Add network** → **Add a network manually** (wording varies by extension version):
 
-| Field | Value |
-|--------|--------|
-| Network name | e.g. `Hardhat Local` |
-| RPC URL | `127.0.0.1:8545` or `http://127.0.0.1:8545` (MetaMask often stores it without `http://`) |
-| Chain ID | `31337` |
-| Currency symbol | `ETH` |
+| Field           | Value                                                                                    |
+| --------------- | ---------------------------------------------------------------------------------------- |
+| Network name    | e.g. `Hardhat Local`                                                                     |
+| RPC URL         | `127.0.0.1:8545` or `http://127.0.0.1:8545` (MetaMask often stores it without `http://`) |
+| Chain ID        | `31337`                                                                                  |
+| Currency symbol | `ETH`                                                                                    |
 
 Leave the block explorer URL empty for local demos.
 
@@ -95,9 +95,9 @@ Do **not** import a random personal wallet and expect localhost funds unless you
 
 ### 3. Turn on the UI and connect
 
-1. **`npm run node`** (running)  
-2. **`npm run deploy`** → set `CONTRACT_ADDRESS` in `frontend/src/contract.js`  
-3. **`cd frontend && npm run dev`** → open the app URL  
+1. **`npm run node`** (running)
+2. **`npm run deploy`** → set `CONTRACT_ADDRESS` in `frontend/src/contract.js`
+3. **`cd frontend && npm run dev`** → open the app URL
 
 Click **Connect** in the app and approve MetaMask if prompted; keep the extension on **Hardhat Local**.
 
@@ -123,3 +123,7 @@ Click **Connect** in the app and approve MetaMask if prompted; keep the extensio
 - Contract: EventTicketNFT in contracts/EventTicketNFT.sol
 - Tests: test/EventTicketNFT.js
 - Frontend: frontend/src/App.jsx
+
+## AI acknowledgement
+
+We produced this project with assistance from AI-assisted tools for scaffolding, refactoring, explanations, documentation, and debugging suggestions. We reviewed, tested, and edited all generated material before adding it to our codebase.
