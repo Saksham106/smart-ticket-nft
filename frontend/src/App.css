@@ -1,54 +1,216 @@
 :root {
-  font-family: "Georgia", "Times New Roman", serif;
-  color: #1b1b1b;
-  background: #f6f3ee;
+  --bg: #0f172a;
+  --panel: #111c33;
+  --panel-2: #0f1a30;
+  --border: rgba(255, 255, 255, 0.14);
+  --text: rgba(255, 255, 255, 0.92);
+  --muted: rgba(255, 255, 255, 0.72);
+  --muted-2: rgba(255, 255, 255, 0.58);
+  --accent: #6366f1;
+  --danger: #ef4444;
+  --radius: 14px;
+  --radius-sm: 10px;
+
+  color-scheme: dark;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial,
+    "Noto Sans", "Liberation Sans", sans-serif;
+  color: var(--text);
+  background: var(--bg);
 }
 
 body {
   margin: 0;
   padding: 0;
+  min-height: 100vh;
+  background: transparent;
 }
 
 .app {
-  max-width: 900px;
+  max-width: 980px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 18px 20px 56px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: auto;
+  gap: 12px;
+  align-items: stretch;
+  grid-auto-rows: minmax(132px, auto);
 }
 
 h1 {
-  margin-bottom: 12px;
+  margin: 0 0 10px;
+  font-size: clamp(1.6rem, 2.2vw, 2.2rem);
+  letter-spacing: -0.02em;
+  grid-column: 1 / -1;
 }
 
 section {
-  border: 1px solid #d9d4c8;
-  padding: 16px;
-  margin-bottom: 16px;
-  background: #fffaf2;
+  border: 1px solid var(--border);
+  padding: 12px 12px 14px;
+  margin: 0;
+  background: var(--panel);
+  border-radius: var(--radius);
+  min-height: 132px;
+  overflow: hidden;
+}
+
+section h2 {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+  color: var(--text);
 }
 
 button {
-  margin-top: 8px;
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: var(--accent);
+  color: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease,
+    opacity 120ms ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.26);
+  background: rgba(99, 102, 241, 0.9);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
 }
 
 input {
-  padding: 6px 8px;
-  margin-top: 6px;
-  margin-right: 8px;
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: var(--panel-2);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 12px;
+  outline: none;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+
+input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+input:focus {
+  border-color: rgba(99, 102, 241, 0.75);
+  background: rgba(15, 26, 48, 0.9);
+}
+
+/* Add breathing room in inline form rows (input + button) */
+input+button {
+  margin-left: 10px;
 }
 
 .status {
-  margin-top: 8px;
-  color: #4b4b4b;
+  margin-top: 10px;
+  color: var(--muted);
   white-space: pre-wrap;
+  max-height: 4.8em;
+  overflow: auto;
 }
 
 .hint {
   margin: 0 0 10px;
-  font-size: 0.95rem;
-  color: #3d3d3d;
+  font-size: 0.93rem;
+  color: var(--muted-2);
   line-height: 1.45;
 }
 
 .hint code {
   font-size: 0.9em;
+  color: rgba(255, 255, 255, 0.85);
+  background: var(--panel-2);
+  padding: 2px 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Ticket catalogs */
+.ticket-catalog {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ticket-catalog li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: var(--panel-2);
+  border-radius: var(--radius-sm);
+}
+
+.ticket-catalog__meta {
+  flex: 1 1 240px;
+  font-size: 0.98rem;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
+.ticket-catalog__meta strong {
+  color: var(--text);
+  font-size: 1.05rem;
+}
+
+.ticket-catalog__actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.ticket-catalog__actions input {
+  min-width: 9rem;
+}
+
+.ticket-catalog__actions span {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.ticket-catalog--wide .ticket-catalog__meta {
+  flex-basis: 320px;
+}
+
+@media (max-width: 640px) {
+  .app {
+    padding: 22px 14px 44px;
+    grid-template-columns: 1fr;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  input {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .ticket-catalog__actions {
+    width: 100%;
+  }
 }
