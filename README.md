@@ -62,6 +62,38 @@ npm run dev
 
 Open the Vite URL printed by Vite (usually `http://localhost:5173`) in **the same desktop browser** where MetaMask runs.
 
+## Configuring supply, primary price, and resale cap
+
+We tune **ticket supply**, **primary sale price**, and **maximum resale price** once, at deployment. The [`EventTicketNFT`](contracts/EventTicketNFT.sol) constructor takes `maxSupply`, `primaryPrice`, and `resalePriceCap` (in wei) alongside the ERC‑721 `"name"` and `"symbol"`. Those three economic parameters become **`immutable` on-chain**, there is **no setter**, so changing them later means **deploying a new contract** (and updating [`frontend/src/contract.js`](frontend/src/contract.js) with the new address).
+
+Our default deploy script is [`scripts/deploy.js`](scripts/deploy.js). Adjust the literals passed into `EventTicketNFT.deploy`:
+
+| Constructor argument order | Meaning                                                                   | Demo default                |
+| -------------------------- | ------------------------------------------------------------------------- | --------------------------- |
+| 1–2                        | Token name / symbol (`"Event Ticket"`, `"TIX"`)                           | As in script                |
+| 3 `maxSupply_`             | Maximum number of NFT tickets that can be minted (`mintTo` + `buyTicket`) | `100`                       |
+| 4 `primaryPrice_`          | Exact ETH required per primary `buyTicket` (wei)                          | `ethers.parseEther("0.05")` |
+| 5 `resalePriceCap_`        | Highest allowed resale list price (`listForResale` reverts above this)    | `ethers.parseEther("0.08")` |
+
+Hard requirement enforced in Solidity: **`resalePriceCap_` must be ≥ `primaryPrice_`**. If the cap were lower than the face value, the constructor reverts with `ResaleCapTooLow`.
+
+After editing the script, run `npm run deploy` again (with a local node or your target network) and copy the new contract address into the frontend as described above.
+
+## Redemption design: holder-initiated vs organizer-only
+
+In this prototype, **check-in is holder-initiated**: only the **current owner** of a ticket may call `redeem(tokenId)` on [`EventTicketNFT`](contracts/EventTicketNFT.sol). The organizer can still **verify** ownership and redemption status (`ownerOf`, `isRedeemed`) off-chain or from the UI, but they do **not** sign an on-chain “redeem this id” transaction for attendees.
+
+Our [`BaselineTicketNFT`](contracts/BaselineTicketNFT.sol) keeps the contrasting pattern for comparison: **`redeem` is `onlyOrganizer`**, closer to “staff taps a button in the organizer wallet.”
+
+### Why we prefer holder redemption for `EventTicketNFT`
+
+**Reduced blast radius if the organizer’s hot wallet is compromised.** Organizer-only redemption concentrates power in whoever controls `owner()`:
+
+- With **organizer redemption**, anyone who obtains that key, or tricks the organizer into signing malicious transactions, can call `redeem` on **arbitrary ticket ids**. That can **mark legitimate tickets burned/used**, lock holders out of the entry flow encoded in `isRedeemed`, or harass the venue at scale, all **without needing the attendee’s credentials** beyond knowing token ids. Recovery is cumbersome, since ticketing state is irreversibly on-chain for those ids unless the protocol has an admin reversal (ours does not).
+- With **holder redemption**, forging “used” state for someone else’s NFT still requires **the holder to sign**, because `redeem` checks `ownerOf(tokenId) == msg.sender`. A stolen **organizer** key remains dangerous for other privileges, but **it cannot unilaterally invalidate every attendee’s ticket** through the redemption path alone.
+
+**Trade-offs.** Organizer-only redemption is operationally simpler for non-crypto gate staff. Holder redemption assumes the attendee brings a signing wallet at entry, which fits this dApp demonstration but adds UX overhead in real venues. Neither model removes **all** operational risk, for example, a compromised organizer key paired with careless mint privileges can still affect supply, so production systems often separate roles, multisigs, hardware keys, or off-chain ticketing systems.
+
 ## MetaMask setup (Hardhat localhost)
 
 Hardhat listens on **`http://127.0.0.1:8545`** with chain ID **`31337`**. MetaMask must use that RPC—not Ethereum mainnet or a testnet—or the frontend cannot read `CONTRACT_ADDRESS` or submit transactions.
